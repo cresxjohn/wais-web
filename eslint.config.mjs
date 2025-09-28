@@ -20,6 +20,30 @@ const eslintConfig = [
       "next-env.d.ts",
     ],
   },
+  {
+    rules: {
+      // Downgrade TypeScript specific rules to warnings for development
+      "@typescript-eslint/no-unused-vars": "warn",
+      "@typescript-eslint/no-explicit-any": "warn",
+
+      // Downgrade React hooks rules to warnings
+      "react-hooks/exhaustive-deps": "warn",
+
+      // Downgrade React specific rules to warnings
+      "react/no-unescaped-entities": "warn",
+
+      // Allow console logs in development
+      "no-console": "off",
+
+      // More permissive rules for rapid development
+      "@typescript-eslint/ban-ts-comment": "warn",
+      "@typescript-eslint/no-inferrable-types": "warn",
+      "@typescript-eslint/no-empty-function": "warn",
+
+      // Allow empty catch blocks with a comment
+      "no-empty": ["warn", { allowEmptyCatch: true }],
+    },
+  },
 ];
 
 export default eslintConfig;

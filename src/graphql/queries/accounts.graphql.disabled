@@ -1,0 +1,184 @@
+query GetAccounts {
+  accounts {
+    id
+    name
+    type
+    balance
+    currency
+    status
+    createdAt
+    updatedAt
+    userId
+
+    # Cash account details
+    cashAccountDetails {
+      id
+      bankName
+      accountNumber
+      notes
+    }
+
+    # Savings account details
+    savingsAccountDetails {
+      id
+      bankName
+      accountNumber
+      interestRate
+      maturityDate
+      notes
+    }
+
+    # Credit account details
+    creditAccountDetails {
+      id
+      bankName
+      accountNumber
+      creditLimit
+      interestRate
+      minimumPayment
+      billingCycle
+      dueDate
+      notes
+    }
+
+    # Loan details
+    loanDetails {
+      id
+      lenderName
+      loanType
+      principalAmount
+      interestRate
+      termMonths
+      monthlyPayment
+      remainingBalance
+      startDate
+      maturityDate
+      notes
+    }
+
+    # Insurance details
+    insuranceDetails {
+      id
+      insuranceName
+      policyNumber
+      insuranceType
+      premiumAmount
+      coverageAmount
+      billingCycle
+      expirationDate
+      beneficiaries
+      notes
+    }
+  }
+}
+
+query GetAccount($id: ID!) {
+  account(id: $id) {
+    id
+    name
+    type
+    balance
+    currency
+    status
+    createdAt
+    updatedAt
+    userId
+
+    # Cash account details
+    cashAccountDetails {
+      id
+      bankName
+      accountNumber
+      notes
+    }
+
+    # Savings account details
+    savingsAccountDetails {
+      id
+      bankName
+      accountNumber
+      interestRate
+      maturityDate
+      notes
+    }
+
+    # Credit account details
+    creditAccountDetails {
+      id
+      bankName
+      accountNumber
+      creditLimit
+      interestRate
+      minimumPayment
+      billingCycle
+      dueDate
+      notes
+    }
+
+    # Loan details
+    loanDetails {
+      id
+      lenderName
+      loanType
+      principalAmount
+      interestRate
+      termMonths
+      monthlyPayment
+      remainingBalance
+      startDate
+      maturityDate
+      notes
+    }
+
+    # Insurance details
+    insuranceDetails {
+      id
+      insuranceName
+      policyNumber
+      insuranceType
+      premiumAmount
+      coverageAmount
+      billingCycle
+      expirationDate
+      beneficiaries
+      notes
+    }
+  }
+}
+
+mutation CreateAccount($input: CreateAccountInput!) {
+  createAccount(createAccountInput: $input) {
+    id
+    name
+    type
+    balance
+    currency
+    status
+    createdAt
+    updatedAt
+    userId
+  }
+}
+
+mutation UpdateAccount($input: UpdateAccountInput!) {
+  updateAccount(updateAccountInput: $input) {
+    id
+    name
+    type
+    balance
+    currency
+    status
+    createdAt
+    updatedAt
+    userId
+  }
+}
+
+mutation RemoveAccount($id: ID!) {
+  removeAccount(id: $id) {
+    id
+    name
+    type
+    status
+  }
+}

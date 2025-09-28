@@ -1,0 +1,191 @@
+query FindPayments {
+  findPayments {
+    id
+    name
+    description
+    amount
+    type
+    category
+    accountId
+    fromAccountId
+    toAccountId
+    startDate
+    endDate
+    status
+    isManual
+    userId
+    createdAt
+    updatedAt
+
+    recurrenceRule {
+      id
+      frequency
+      interval
+      endDate
+      endAfterOccurrences
+      weeklyDaysOfWeek
+      monthlyDayOfMonth
+      monthlyWeekOfMonth
+      monthlyDayOfWeek
+    }
+  }
+}
+
+query FindUpcomingPayments($days: Int) {
+  findUpcomingPayments(days: $days) {
+    id
+    name
+    description
+    amount
+    type
+    category
+    accountId
+    fromAccountId
+    toAccountId
+    startDate
+    endDate
+    status
+    isManual
+    userId
+    createdAt
+    updatedAt
+
+    recurrenceRule {
+      id
+      frequency
+      interval
+      endDate
+      endAfterOccurrences
+      weeklyDaysOfWeek
+      monthlyDayOfMonth
+      monthlyWeekOfMonth
+      monthlyDayOfWeek
+    }
+  }
+}
+
+query FindTransactions($startDate: String, $endDate: String) {
+  findTransactions(startDate: $startDate, endDate: $endDate) {
+    id
+    description
+    amount
+    type
+    category
+    accountId
+    fromAccountId
+    toAccountId
+    date
+    status
+    isRecurring
+    tags
+    notes
+    userId
+    paymentId
+    createdAt
+    updatedAt
+  }
+}
+
+mutation CreatePayment($input: CreatePaymentInput!) {
+  createPayment(createPaymentInput: $input) {
+    id
+    name
+    description
+    amount
+    type
+    category
+    accountId
+    fromAccountId
+    toAccountId
+    startDate
+    endDate
+    status
+    isManual
+    userId
+    createdAt
+    updatedAt
+
+    recurrenceRule {
+      id
+      frequency
+      interval
+      endDate
+      endAfterOccurrences
+      weeklyDaysOfWeek
+      monthlyDayOfMonth
+      monthlyWeekOfMonth
+      monthlyDayOfWeek
+    }
+  }
+}
+
+mutation UpdatePayment($input: UpdatePaymentInput!) {
+  updatePayment(updatePaymentInput: $input) {
+    id
+    name
+    description
+    amount
+    type
+    category
+    accountId
+    fromAccountId
+    toAccountId
+    startDate
+    endDate
+    status
+    isManual
+    userId
+    createdAt
+    updatedAt
+
+    recurrenceRule {
+      id
+      frequency
+      interval
+      endDate
+      endAfterOccurrences
+      weeklyDaysOfWeek
+      monthlyDayOfMonth
+      monthlyWeekOfMonth
+      monthlyDayOfWeek
+    }
+  }
+}
+
+mutation RemovePayment($id: ID!) {
+  removePayment(id: $id) {
+    id
+    name
+    status
+  }
+}
+
+mutation PopulateTransactions(
+  $paymentId: ID!
+  $startDate: String!
+  $endDate: String!
+) {
+  populateTransactions(
+    paymentId: $paymentId
+    startDate: $startDate
+    endDate: $endDate
+  ) {
+    id
+    description
+    amount
+    type
+    category
+    accountId
+    fromAccountId
+    toAccountId
+    date
+    status
+    isRecurring
+    tags
+    notes
+    userId
+    paymentId
+    createdAt
+    updatedAt
+  }
+}
