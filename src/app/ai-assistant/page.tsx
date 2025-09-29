@@ -103,13 +103,13 @@ export default function AIAssistantPage() {
           )}
         </AvatarFallback>
       </Avatar>
-      <div className="flex-1 space-y-2">
+      <div className="flex-1 space-y-2 min-w-0">
         <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
           {message.role === "user" ? "You" : "WAIS AI"}
         </div>
-        <div className="prose prose-sm dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed">
+        <div className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed break-words overflow-wrap-anywhere">
           {message.content.split("\n").map((line: string, index: number) => (
-            <p key={index} className="mb-2 last:mb-0">
+            <p key={index} className="mb-2 last:mb-0 break-words">
               {line}
             </p>
           ))}
@@ -127,7 +127,7 @@ export default function AIAssistantPage() {
                     className="flex items-start gap-2 text-sm text-gray-700 dark:text-gray-300"
                   >
                     <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
-                    {rec}
+                    <span className="break-words">{rec}</span>
                   </li>
                 )
               )}
@@ -142,16 +142,16 @@ export default function AIAssistantPage() {
     <AppLayout title="">
       <div className="flex h-[calc(100vh-4rem)] bg-white dark:bg-gray-950">
         {/* Conversations Sidebar */}
-        <div className="w-80 bg-gray-50 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 flex flex-col">
+        <div className="w-80 bg-gray-50 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 flex flex-col flex-shrink-0">
           {/* Header */}
-          <div className="p-4 border-b border-gray-200 dark:border-gray-800">
+          <div className="p-4 border-b border-gray-200 dark:border-gray-800 flex-shrink-0">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="font-semibold text-lg">WAIS AI</h2>
+              <h2 className="font-semibold text-lg truncate">WAIS AI</h2>
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => startNewConversation()}
-                className="h-8 w-8 p-0"
+                className="h-8 w-8 p-0 flex-shrink-0"
               >
                 <Plus className="w-4 h-4" />
               </Button>
@@ -159,85 +159,89 @@ export default function AIAssistantPage() {
           </div>
 
           {/* Conversations List */}
-          <ScrollArea className="flex-1 px-2">
-            <div className="space-y-1 py-2">
-              {conversations.map((conversation) => (
-                <div
-                  key={conversation.id}
-                  className={cn(
-                    "group relative p-3 rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors",
-                    currentConversation?.id === conversation.id &&
-                      "bg-gray-100 dark:bg-gray-800"
-                  )}
-                  onClick={() => setCurrentConversation(conversation)}
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium truncate text-gray-900 dark:text-gray-100">
-                        {conversation.title}
-                      </p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                        {conversation.messages.length} messages
-                      </p>
+          <div className="flex-1 overflow-hidden">
+            <ScrollArea className="h-full px-2">
+              <div className="space-y-1 py-2">
+                {conversations.map((conversation) => (
+                  <div
+                    key={conversation.id}
+                    className={cn(
+                      "group relative p-3 rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors",
+                      currentConversation?.id === conversation.id &&
+                        "bg-gray-100 dark:bg-gray-800"
+                    )}
+                    onClick={() => setCurrentConversation(conversation)}
+                  >
+                    <div className="flex items-center justify-between min-w-0">
+                      <div className="flex-1 min-w-0 pr-2">
+                        <p className="text-sm font-medium truncate text-gray-900 dark:text-gray-100">
+                          {conversation.title}
+                        </p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                          {conversation.messages.length} messages
+                        </p>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="opacity-0 group-hover:opacity-100 h-6 w-6 p-0 flex-shrink-0"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          deleteConversation(conversation.id);
+                        }}
+                      >
+                        <MoreHorizontal className="w-3 h-3" />
+                      </Button>
                     </div>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="opacity-0 group-hover:opacity-100 h-6 w-6 p-0"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        deleteConversation(conversation.id);
-                      }}
-                    >
-                      <MoreHorizontal className="w-3 h-3" />
-                    </Button>
                   </div>
-                </div>
-              ))}
-            </div>
-          </ScrollArea>
+                ))}
+              </div>
+            </ScrollArea>
+          </div>
         </div>
 
         {/* Chat Interface */}
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col min-w-0">
           {currentConversation ? (
             <>
               {/* Messages Area */}
-              <ScrollArea className="flex-1 px-4">
-                <div className="max-w-3xl mx-auto py-8 space-y-6">
-                  {currentConversation.messages.map((message) => (
-                    <MessageComponent key={message.id} message={message} />
-                  ))}
-                  {isTyping && (
-                    <div className="flex items-start space-x-4">
-                      <Avatar className="w-8 h-8 flex-shrink-0">
-                        <AvatarFallback className="bg-green-500 text-white">
-                          <Bot className="w-4 h-4" />
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1 space-y-1">
-                        <div className="flex items-center space-x-2">
-                          <div className="flex space-x-1">
-                            <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                            <div
-                              className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
-                              style={{ animationDelay: "0.1s" }}
-                            ></div>
-                            <div
-                              className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
-                              style={{ animationDelay: "0.2s" }}
-                            ></div>
+              <div className="flex-1 overflow-hidden">
+                <ScrollArea className="h-full">
+                  <div className="px-4 py-8 max-w-3xl mx-auto space-y-6">
+                    {currentConversation.messages.map((message) => (
+                      <MessageComponent key={message.id} message={message} />
+                    ))}
+                    {isTyping && (
+                      <div className="flex items-start space-x-4">
+                        <Avatar className="w-8 h-8 flex-shrink-0">
+                          <AvatarFallback className="bg-green-500 text-white">
+                            <Bot className="w-4 h-4" />
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1 space-y-1">
+                          <div className="flex items-center space-x-2">
+                            <div className="flex space-x-1">
+                              <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                              <div
+                                className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                                style={{ animationDelay: "0.1s" }}
+                              ></div>
+                              <div
+                                className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                                style={{ animationDelay: "0.2s" }}
+                              ></div>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  )}
-                  <div ref={messagesEndRef} />
-                </div>
-              </ScrollArea>
+                    )}
+                    <div ref={messagesEndRef} />
+                  </div>
+                </ScrollArea>
+              </div>
 
               {/* Input Area */}
-              <div className="border-t border-gray-200 dark:border-gray-800 p-4">
+              <div className="flex-shrink-0 border-t border-gray-200 dark:border-gray-800 p-4">
                 <div className="max-w-3xl mx-auto">
                   <div className="relative flex items-center bg-gray-100 dark:bg-gray-800 rounded-xl p-3">
                     <Input
@@ -247,13 +251,13 @@ export default function AIAssistantPage() {
                       onChange={(e) => setInputMessage(e.target.value)}
                       onKeyPress={handleKeyPress}
                       disabled={isLoading}
-                      className="flex-1 border-0 bg-transparent focus:ring-0 focus:outline-none"
+                      className="flex-1 border-0 bg-transparent focus:ring-0 focus:outline-none min-w-0"
                     />
                     <Button
                       onClick={handleSendMessage}
                       disabled={!inputMessage.trim() || isLoading}
                       size="sm"
-                      className="ml-2 h-8 w-8 p-0 bg-green-500 hover:bg-green-600"
+                      className="ml-2 h-8 w-8 p-0 bg-green-500 hover:bg-green-600 flex-shrink-0"
                     >
                       <Send className="w-4 h-4" />
                     </Button>
