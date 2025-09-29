@@ -278,41 +278,107 @@ export default function BudgetPage() {
   const AlertCard = ({ alert }: { alert: any }) => {
     const category = categories.find((c) => c.id === alert.categoryId);
 
+    const getAlertSeverityColor = (type: string) => {
+      switch (type) {
+        case "exceeded":
+          return "text-red-600 bg-red-50 dark:bg-red-950/50";
+        case "warning":
+          return "text-orange-600 bg-orange-50 dark:bg-orange-950/50";
+        case "approaching":
+          return "text-amber-600 bg-amber-50 dark:bg-amber-950/50";
+        default:
+          return "text-blue-600 bg-blue-50 dark:bg-blue-950/50";
+      }
+    };
+
     return (
-      <Alert
+      <div
         className={cn(
-          "cursor-pointer hover:shadow-md transition-shadow",
-          alert.type === "exceeded" && "border-red-300 dark:border-red-700",
-          alert.type === "warning" &&
-            "border-orange-300 dark:border-orange-700",
-          alert.type === "approaching" &&
-            "border-yellow-300 dark:border-yellow-700",
-          alert.isRead && "opacity-60"
+          "rounded-lg border bg-card text-card-foreground transition-all duration-200",
+          "hover:shadow-sm cursor-pointer",
+          alert.isRead ? "opacity-60" : "hover:bg-muted/30"
         )}
+        onClick={() => !alert.isRead && markAlertAsRead(alert.id)}
       >
-        <div className="flex items-start space-x-3">
-          {getAlertIcon(alert.type)}
-          <div className="flex-1">
-            <AlertTitle className="text-sm font-medium">
-              {category?.name} -{" "}
-              {alert.type.charAt(0).toUpperCase() + alert.type.slice(1)}
-            </AlertTitle>
-            <AlertDescription className="text-sm">
-              {alert.message}
-            </AlertDescription>
-            <p className="text-xs text-muted-foreground mt-1">
-              {formatDistanceToNow(new Date(alert.date))} ago
-            </p>
+        <div className="p-4">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex items-start gap-3 flex-1">
+              {/* Alert Icon */}
+              <div
+                className={cn(
+                  "flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center",
+                  getAlertSeverityColor(alert.type)
+                )}
+              >
+                {getAlertIcon(alert.type)}
+              </div>
+
+              {/* Content */}
+              <div className="flex-1 space-y-1">
+                <div className="flex items-center gap-2">
+                  <h4 className="text-sm font-semibold text-foreground">
+                    {category?.name}
+                  </h4>
+                  <Badge
+                    variant="outline"
+                    className={cn(
+                      "text-xs px-2 py-0 capitalize",
+                      alert.type === "exceeded" &&
+                        "border-red-200 text-red-700 bg-red-50",
+                      alert.type === "warning" &&
+                        "border-orange-200 text-orange-700 bg-orange-50",
+                      alert.type === "approaching" &&
+                        "border-amber-200 text-amber-700 bg-amber-50"
+                    )}
+                  >
+                    {alert.type === "exceeded"
+                      ? "Over Budget"
+                      : alert.type === "warning"
+                      ? "Warning"
+                      : "Approaching Limit"}
+                  </Badge>
+                </div>
+
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {alert.message}
+                </p>
+
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <Calendar className="w-3 h-3" />
+                  <span>{formatDistanceToNow(new Date(alert.date))} ago</span>
+                  {!alert.isRead && (
+                    <>
+                      <span>•</span>
+                      <span className="text-blue-600 font-medium">Unread</span>
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Action Button */}
+            <div className="flex-shrink-0">
+              {!alert.isRead ? (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 w-8 p-0 text-muted-foreground hover:text-foreground"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    markAlertAsRead(alert.id);
+                  }}
+                >
+                  <CheckCircle className="w-4 h-4" />
+                </Button>
+              ) : (
+                <div className="w-8 h-8 flex items-center justify-center">
+                  <CheckCircle className="w-4 h-4 text-green-500" />
+                </div>
+              )}
+            </div>
           </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => markAlertAsRead(alert.id)}
-          >
-            {!alert.isRead && <CheckCircle className="w-4 h-4" />}
-          </Button>
         </div>
-      </Alert>
+      </div>
     );
   };
 
@@ -418,24 +484,54 @@ export default function BudgetPage() {
 
         {/* Alerts Section */}
         {unreadAlerts.length > 0 && (
-          <Card className="border-orange-300 dark:border-orange-700">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-              <div>
-                <CardTitle className="text-lg">Budget Alerts</CardTitle>
-                <CardDescription>
-                  {unreadAlerts.length} unread alert
-                  {unreadAlerts.length !== 1 ? "s" : ""}
-                </CardDescription>
+          <Card className="border-l-4 border-l-orange-500">
+            <CardHeader className="pb-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2">
+                    <Bell className="w-5 h-5 text-orange-500" />
+                    <CardTitle className="text-lg font-semibold">
+                      Budget Alerts
+                    </CardTitle>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Badge
+                    variant="secondary"
+                    className="bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300"
+                  >
+                    {unreadAlerts.length} unread
+                  </Badge>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={clearAllAlerts}
+                    className="text-muted-foreground hover:text-foreground"
+                  >
+                    Clear All
+                  </Button>
+                </div>
               </div>
-              <Button variant="outline" size="sm" onClick={clearAllAlerts}>
-                Clear All
-              </Button>
+              <CardDescription className="text-sm">
+                Monitor your spending and stay within budget limits
+              </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="pt-0">
               <div className="space-y-3">
                 {unreadAlerts.slice(0, 3).map((alert) => (
                   <AlertCard key={alert.id} alert={alert} />
                 ))}
+                {unreadAlerts.length > 3 && (
+                  <div className="text-center pt-2">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="text-muted-foreground"
+                    >
+                      View {unreadAlerts.length - 3} more alerts
+                    </Button>
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
