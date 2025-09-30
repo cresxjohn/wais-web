@@ -1,7 +1,16 @@
-import { Button } from "@/components/ui/button";
-import { ArrowRight, TrendingUp, Shield, Smartphone, Zap } from "lucide-react";
-import Link from "next/link";
 import { AuthRedirect } from "@/components/auth/auth-redirect";
+import { Button } from "@/components/ui/button";
+import {
+  ArrowRight,
+  CheckCircle,
+  Shield,
+  Smartphone,
+  Star,
+  TrendingUp,
+  Users,
+  Zap,
+} from "lucide-react";
+import Link from "next/link";
 
 // This page is now statically generated for better performance
 export default function HomePage() {
@@ -46,11 +55,31 @@ export default function HomePage() {
               financial moves
             </h1>
 
-            <p className="text-xl text-gray-600 mb-10 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
               Take control of your finances with intelligent tracking, AI-driven
               insights, and seamless integration with Philippine banks and
               e-wallets.
             </p>
+
+            {/* Trust Indicators */}
+            <div className="flex flex-wrap items-center justify-center gap-6 mb-10 text-sm text-gray-600">
+              <div className="flex items-center gap-2">
+                <Shield className="w-4 h-4 text-green-600" />
+                <span>Bank-level security</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <CheckCircle className="w-4 h-4 text-green-600" />
+                <span>BSP & NPC compliant</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Users className="w-4 h-4 text-green-600" />
+                <span>Trusted by 10,000+ Filipinos</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Star className="w-4 h-4 text-green-600" />
+                <span>4.9/5 rating</span>
+              </div>
+            </div>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button size="lg" className="text-lg px-8 py-4">
@@ -79,8 +108,8 @@ export default function HomePage() {
                 AI-Powered Insights
               </h3>
               <p className="text-gray-600">
-                Get personalized financial advice and spending insights powered
-                by advanced AI
+                Get personalized financial advice, spending patterns, and smart
+                recommendations to optimize your money
               </p>
             </div>
 
@@ -92,8 +121,8 @@ export default function HomePage() {
                 Bank-Level Security
               </h3>
               <p className="text-gray-600">
-                Your financial data is protected with enterprise-grade
-                encryption and security
+                256-bit encryption, multi-factor authentication, and regulatory
+                compliance keep your financial data safe
               </p>
             </div>
 
@@ -105,8 +134,8 @@ export default function HomePage() {
                 Philippines-First
               </h3>
               <p className="text-gray-600">
-                Seamlessly integrate with local banks and e-wallets like BPI,
-                UnionBank, GCash
+                Native integrations with BPI, Metrobank, UnionBank, GCash,
+                PayMaya, and 50+ local financial institutions
               </p>
             </div>
 
@@ -118,15 +147,46 @@ export default function HomePage() {
                 Real-Time Tracking
               </h3>
               <p className="text-gray-600">
-                Track expenses, manage budgets, and monitor your financial
-                health in real-time
+                Instant notifications, automatic categorization, and live
+                balance updates across all your accounts
+              </p>
+            </div>
+          </div>
+
+          {/* Additional Features Section */}
+          <div className="grid md:grid-cols-3 gap-8 mb-20">
+            <div className="text-center p-6">
+              <h4 className="text-lg font-semibold text-gray-900 mb-3">
+                Smart Budgeting
+              </h4>
+              <p className="text-gray-600">
+                AI suggests budget allocations based on your income, spending
+                habits, and financial goals
+              </p>
+            </div>
+            <div className="text-center p-6">
+              <h4 className="text-lg font-semibold text-gray-900 mb-3">
+                Credit Monitoring
+              </h4>
+              <p className="text-gray-600">
+                Track your credit score with TransUnion and get alerts on
+                changes to your credit report
+              </p>
+            </div>
+            <div className="text-center p-6">
+              <h4 className="text-lg font-semibold text-gray-900 mb-3">
+                Bill Reminders
+              </h4>
+              <p className="text-gray-600">
+                Never miss a payment with smart reminders and automated bill
+                tracking
               </p>
             </div>
           </div>
 
           {/* CTA Section */}
           <div className="walz-gradient-insights rounded-3xl p-12 text-center text-white relative overflow-hidden">
-            <div className="relative z-10">
+            <div className="flex flex-col items-center relative z-10">
               <h2 className="text-4xl font-bold mb-6">
                 Ready to take control of your finances?
               </h2>
