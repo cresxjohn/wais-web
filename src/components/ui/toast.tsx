@@ -45,32 +45,28 @@ const toastIcons = {
 
 const toastStyles = {
   success: {
-    bg: "bg-green-50",
-    border: "border-green-200",
-    icon: "text-green-600",
-    title: "text-green-800",
-    message: "text-green-700",
+    bg: "bg-gradient-to-r from-emerald-500 to-emerald-600",
+    icon: "text-white",
+    title: "text-white",
+    message: "text-emerald-50",
   },
   error: {
-    bg: "bg-red-50",
-    border: "border-red-200",
-    icon: "text-red-600",
-    title: "text-red-800",
-    message: "text-red-700",
+    bg: "bg-gradient-to-r from-rose-500 to-rose-600",
+    icon: "text-white",
+    title: "text-white",
+    message: "text-rose-50",
   },
   warning: {
-    bg: "bg-yellow-50",
-    border: "border-yellow-200",
-    icon: "text-yellow-600",
-    title: "text-yellow-800",
-    message: "text-yellow-700",
+    bg: "bg-gradient-to-r from-orange-500 to-orange-600",
+    icon: "text-white",
+    title: "text-white",
+    message: "text-orange-50",
   },
   info: {
-    bg: "bg-blue-50",
-    border: "border-blue-200",
-    icon: "text-blue-600",
-    title: "text-blue-800",
-    message: "text-blue-700",
+    bg: "bg-gradient-to-r from-blue-500 to-blue-600",
+    icon: "text-white",
+    title: "text-white",
+    message: "text-blue-50",
   },
 };
 
@@ -93,28 +89,25 @@ function ToastItem({ toast, onRemove }: ToastItemProps) {
     <div className={isExiting ? "toast-exit" : "toast-enter"}>
       <div
         className={`
-        ${styles.bg} ${styles.border}
-        border rounded-xl shadow-lg p-4 max-w-md w-full
+        ${styles.bg}
+        rounded-xl shadow-xl p-5 max-w-md w-full backdrop-blur-sm
       `}
       >
         <div className="flex items-start gap-3">
-          <Icon className={`w-5 h-5 ${styles.icon} flex-shrink-0 mt-0.5`} />
+          <Icon className={`w-6 h-6 ${styles.icon} flex-shrink-0`} />
           <div className="flex-1 min-w-0">
-            <p className={`font-semibold text-sm ${styles.title}`}>
+            <p className={`font-semibold text-base ${styles.title}`}>
               {toast.title}
             </p>
             {toast.message && (
-              <p className={`text-sm ${styles.message} mt-1`}>
+              <p className={`text-sm ${styles.message} mt-1 leading-relaxed`}>
                 {toast.message}
               </p>
             )}
           </div>
           <button
             onClick={handleRemove}
-            className={`
-              ${styles.icon} hover:opacity-70 transition-opacity
-              p-1 rounded-full hover:bg-black/10
-            `}
+            className="text-white/80 hover:text-white hover:bg-white/20 transition-all p-1 rounded-full"
           >
             <X className="w-4 h-4" />
           </button>
@@ -142,9 +135,11 @@ function ToastContainer() {
   }
 
   return createPortal(
-    <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 space-y-3">
+    <div className="fixed inset-x-0 top-6 z-50 flex flex-col items-center space-y-3 pointer-events-none">
       {toasts.map((toast) => (
-        <ToastItem key={toast.id} toast={toast} onRemove={removeToast} />
+        <div key={toast.id} className="pointer-events-auto">
+          <ToastItem toast={toast} onRemove={removeToast} />
+        </div>
       ))}
     </div>,
     document.body
