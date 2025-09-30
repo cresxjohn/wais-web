@@ -18,7 +18,11 @@ import {
   SidebarSubItem,
 } from "./sidebar-item";
 
-export function Sidebar() {
+interface SidebarProps {
+  onMobileMenuToggle?: () => void;
+}
+
+export function Sidebar({ onMobileMenuToggle }: SidebarProps = {}) {
   const router = useRouter();
   const pathname = usePathname();
   const [isToolsExpanded, setIsToolsExpanded] = useState(true);
@@ -27,10 +31,14 @@ export function Sidebar() {
 
   const navigate = (path: string) => {
     router.push(path);
+    // Close mobile menu when navigating
+    if (onMobileMenuToggle) {
+      onMobileMenuToggle();
+    }
   };
 
   return (
-    <div className="w-72 bg-white sticky top-0 h-screen overflow-y-auto">
+    <div className="w-72 bg-white h-screen overflow-y-auto border-r border-gray-200">
       <div className="p-6">
         <div className="flex items-center gap-3 mt-2 ml-5 mb-8">
           <img

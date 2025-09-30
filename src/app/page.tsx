@@ -26,17 +26,17 @@ export default function HomePage() {
                 <img
                   src="/walz-logo.png"
                   alt="walz logo"
-                  className="h-8 rounded-lg"
+                  className="h-6 sm:h-8 rounded-lg"
                 />
               </div>
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2 sm:gap-4">
                 <Link
                   href="/auth/login"
-                  className="text-gray-600 hover:text-gray-900 font-medium"
+                  className="text-gray-600 hover:text-gray-900 font-medium text-sm sm:text-base"
                 >
                   Sign In
                 </Link>
-                <Button size="sm">
+                <Button size="sm" className="text-sm px-3 py-2 sm:px-4">
                   <Link href="/auth/signup">Get Started</Link>
                 </Button>
               </div>
@@ -45,9 +45,9 @@ export default function HomePage() {
         </nav>
 
         {/* Hero Section */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-          <div className="text-center mb-20">
-            <h1 className="text-5xl md:text-7xl font-bold text-gray-900 mb-6 leading-tight">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-20">
+          <div className="text-center mb-12 sm:mb-16 lg:mb-20">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold text-gray-900 mb-4 sm:mb-6 leading-tight">
               Your AI-powered partner for{" "}
               <span className="walz-gradient-primary bg-clip-text text-transparent">
                 walz
@@ -55,43 +55,51 @@ export default function HomePage() {
               financial moves
             </h1>
 
-            <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-base sm:text-lg lg:text-xl text-gray-600 mb-6 sm:mb-8 max-w-3xl mx-auto leading-relaxed px-4 sm:px-0">
               Take control of your finances with intelligent tracking, AI-driven
               insights, and seamless integration with Philippine banks and
               e-wallets.
             </p>
 
             {/* Trust Indicators */}
-            <div className="flex flex-wrap items-center justify-center gap-6 mb-10 text-sm text-gray-600">
-              <div className="flex items-center gap-2">
-                <Shield className="w-4 h-4 text-green-600" />
-                <span>Bank-level security</span>
+            <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 lg:gap-6 mb-8 sm:mb-10 text-xs sm:text-sm text-gray-600 px-4">
+              <div className="flex items-center gap-1 sm:gap-2">
+                <Shield className="w-3 h-3 sm:w-4 sm:h-4 text-green-600 flex-shrink-0" />
+                <span className="whitespace-nowrap">Bank-level security</span>
               </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle className="w-4 h-4 text-green-600" />
-                <span>BSP & NPC compliant</span>
+              <div className="flex items-center gap-1 sm:gap-2">
+                <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4 text-green-600 flex-shrink-0" />
+                <span className="whitespace-nowrap">BSP & NPC compliant</span>
               </div>
-              <div className="flex items-center gap-2">
-                <Users className="w-4 h-4 text-green-600" />
-                <span>Trusted by 10,000+ Filipinos</span>
+              <div className="flex items-center gap-1 sm:gap-2">
+                <Users className="w-3 h-3 sm:w-4 sm:h-4 text-green-600 flex-shrink-0" />
+                <span className="whitespace-nowrap">
+                  Trusted by 10,000+ Filipinos
+                </span>
               </div>
-              <div className="flex items-center gap-2">
-                <Star className="w-4 h-4 text-green-600" />
-                <span>4.9/5 rating</span>
+              <div className="flex items-center gap-1 sm:gap-2">
+                <Star className="w-3 h-3 sm:w-4 sm:h-4 text-green-600 flex-shrink-0" />
+                <span className="whitespace-nowrap">4.9/5 rating</span>
               </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="text-lg px-8 py-4">
-                <Link href="/auth/signup" className="flex items-center gap-2">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-4 sm:px-0">
+              <Button
+                size="lg"
+                className="text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 w-full sm:w-auto"
+              >
+                <Link
+                  href="/auth/signup"
+                  className="flex items-center justify-center gap-2"
+                >
                   Get Started Free
-                  <ArrowRight className="w-5 h-5" />
+                  <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
                 </Link>
               </Button>
               <Button
                 variant="secondary"
                 size="lg"
-                className="text-lg px-8 py-4"
+                className="text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 w-full sm:w-auto"
               >
                 <Link href="/auth/login">Sign In</Link>
               </Button>
@@ -99,54 +107,54 @@ export default function HomePage() {
           </div>
 
           {/* Features Grid */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-20">
-            <div className="walz-card p-8 text-center hover:shadow-lg transition-all">
-              <div className="w-16 h-16 walz-gradient-primary rounded-2xl flex items-center justify-center mx-auto mb-6">
-                <TrendingUp className="h-8 w-8 text-white" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 mb-12 sm:mb-16 lg:mb-20">
+            <div className="walz-card p-6 sm:p-8 text-center hover:shadow-lg transition-all">
+              <div className="w-12 h-12 sm:w-16 sm:h-16 walz-gradient-primary rounded-2xl flex items-center justify-center mx-auto mb-4 sm:mb-6">
+                <TrendingUp className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4">
                 AI-Powered Insights
               </h3>
-              <p className="text-gray-600">
+              <p className="text-sm sm:text-base text-gray-600">
                 Get personalized financial advice, spending patterns, and smart
                 recommendations to optimize your money
               </p>
             </div>
 
-            <div className="walz-card p-8 text-center hover:shadow-lg transition-all">
-              <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                <Shield className="h-8 w-8 text-white" />
+            <div className="walz-card p-6 sm:p-8 text-center hover:shadow-lg transition-all">
+              <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center mx-auto mb-4 sm:mb-6">
+                <Shield className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4">
                 Bank-Level Security
               </h3>
-              <p className="text-gray-600">
+              <p className="text-sm sm:text-base text-gray-600">
                 256-bit encryption, multi-factor authentication, and regulatory
                 compliance keep your financial data safe
               </p>
             </div>
 
-            <div className="walz-card p-8 text-center hover:shadow-lg transition-all">
-              <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                <Smartphone className="h-8 w-8 text-white" />
+            <div className="walz-card p-6 sm:p-8 text-center hover:shadow-lg transition-all">
+              <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4 sm:mb-6">
+                <Smartphone className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4">
                 Philippines-First
               </h3>
-              <p className="text-gray-600">
+              <p className="text-sm sm:text-base text-gray-600">
                 Native integrations with BPI, Metrobank, UnionBank, GCash,
                 PayMaya, and 50+ local financial institutions
               </p>
             </div>
 
-            <div className="walz-card p-8 text-center hover:shadow-lg transition-all">
-              <div className="w-16 h-16 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                <Zap className="h-8 w-8 text-white" />
+            <div className="walz-card p-6 sm:p-8 text-center hover:shadow-lg transition-all">
+              <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center mx-auto mb-4 sm:mb-6">
+                <Zap className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4">
                 Real-Time Tracking
               </h3>
-              <p className="text-gray-600">
+              <p className="text-sm sm:text-base text-gray-600">
                 Instant notifications, automatic categorization, and live
                 balance updates across all your accounts
               </p>
@@ -154,30 +162,30 @@ export default function HomePage() {
           </div>
 
           {/* Additional Features Section */}
-          <div className="grid md:grid-cols-3 gap-8 mb-20">
-            <div className="text-center p-6">
-              <h4 className="text-lg font-semibold text-gray-900 mb-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mb-12 sm:mb-16 lg:mb-20">
+            <div className="text-center p-4 sm:p-6">
+              <h4 className="text-base sm:text-lg font-semibold text-gray-900 mb-2 sm:mb-3">
                 Smart Budgeting
               </h4>
-              <p className="text-gray-600">
+              <p className="text-sm sm:text-base text-gray-600">
                 AI suggests budget allocations based on your income, spending
                 habits, and financial goals
               </p>
             </div>
-            <div className="text-center p-6">
-              <h4 className="text-lg font-semibold text-gray-900 mb-3">
+            <div className="text-center p-4 sm:p-6">
+              <h4 className="text-base sm:text-lg font-semibold text-gray-900 mb-2 sm:mb-3">
                 Credit Monitoring
               </h4>
-              <p className="text-gray-600">
+              <p className="text-sm sm:text-base text-gray-600">
                 Track your credit score with TransUnion and get alerts on
                 changes to your credit report
               </p>
             </div>
-            <div className="text-center p-6">
-              <h4 className="text-lg font-semibold text-gray-900 mb-3">
+            <div className="text-center p-4 sm:p-6">
+              <h4 className="text-base sm:text-lg font-semibold text-gray-900 mb-2 sm:mb-3">
                 Bill Reminders
               </h4>
-              <p className="text-gray-600">
+              <p className="text-sm sm:text-base text-gray-600">
                 Never miss a payment with smart reminders and automated bill
                 tracking
               </p>
@@ -185,27 +193,30 @@ export default function HomePage() {
           </div>
 
           {/* CTA Section */}
-          <div className="walz-gradient-insights rounded-3xl p-12 text-center text-white relative overflow-hidden">
-            <div className="flex flex-col items-center relative z-10">
-              <h2 className="text-4xl font-bold mb-6">
+          <div className="walz-gradient-insights rounded-2xl sm:rounded-3xl p-6 sm:p-8 lg:p-12 text-center text-white relative overflow-hidden">
+            <div className="relative z-10">
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4 sm:mb-6">
                 Ready to take control of your finances?
               </h2>
-              <p className="text-xl text-blue-100 mb-10 max-w-2xl mx-auto">
+              <p className="text-sm sm:text-lg lg:text-xl text-blue-100 mb-6 sm:mb-8 lg:mb-10 max-w-2xl mx-auto px-4 sm:px-0">
                 Join thousands of Filipinos already using Walz to build better
                 financial habits
               </p>
               <Button
                 size="lg"
-                className="text-lg px-8 py-4 bg-white hover:bg-gray-100 text-blue-600"
+                className="text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 bg-white hover:bg-gray-100 text-blue-600 w-full sm:w-auto"
               >
-                <Link href="/auth/signup" className="flex items-center gap-2">
+                <Link
+                  href="/auth/signup"
+                  className="flex items-center justify-center gap-2"
+                >
                   Start Your Financial Journey
-                  <ArrowRight className="w-5 h-5" />
+                  <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
                 </Link>
               </Button>
             </div>
-            <div className="absolute -right-20 -bottom-20 opacity-10">
-              <TrendingUp className="w-80 h-80" />
+            <div className="absolute -right-10 sm:-right-20 -bottom-10 sm:-bottom-20 opacity-10">
+              <TrendingUp className="w-40 h-40 sm:w-60 sm:h-60 lg:w-80 lg:h-80" />
             </div>
           </div>
         </div>
