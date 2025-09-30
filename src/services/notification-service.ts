@@ -1,5 +1,36 @@
 import { type Notification } from "@/stores/app-store";
-import { toast } from "sonner";
+
+// Global toast interface - will be set by the toast provider
+let globalToast: any = null;
+
+export function setGlobalToast(toast: any) {
+  globalToast = toast;
+}
+
+// Simple notification function fallback to console
+const toast = {
+  success: (title: string, message?: string) => {
+    if (globalToast) {
+      globalToast.success(title, message);
+    } else {
+      console.log("✅", title, message || "");
+    }
+  },
+  error: (title: string, message?: string) => {
+    if (globalToast) {
+      globalToast.error(title, message);
+    } else {
+      console.error("❌", title, message || "");
+    }
+  },
+  info: (title: string, message?: string) => {
+    if (globalToast) {
+      globalToast.info(title, message);
+    } else {
+      console.log("ℹ️", title, message || "");
+    }
+  },
+};
 
 // Push notification service
 export class NotificationService {
@@ -44,7 +75,8 @@ export class NotificationService {
       toast.success("Notifications enabled successfully!");
     } else if (permission === "denied") {
       toast.error(
-        "Notifications blocked. Please enable them in browser settings."
+        "Notifications blocked",
+        "Please enable them in browser settings."
       );
     }
 
@@ -168,9 +200,7 @@ export class NotificationService {
     const lowPriorityTypes: Notification["type"][] = ["info"];
 
     if (lowPriorityTypes.includes(notification.type)) {
-      toast.info(notification.title, {
-        description: notification.message,
-      });
+      toast.info(notification.title, notification.message);
       return;
     }
 
@@ -186,9 +216,7 @@ export class NotificationService {
     }
 
     // Default to toast notification
-    toast(notification.title, {
-      description: notification.message,
-    });
+    toast.info(notification.title, notification.message);
   }
 
   // Send subscription to server (stub implementation)

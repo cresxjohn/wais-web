@@ -1,20 +1,10 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Download, Smartphone, X, Zap } from "lucide-react";
 import { useEffect, useState } from "react";
-import { toast } from "sonner";
+import { X, Download } from "lucide-react";
 
 interface BeforeInstallPromptEvent extends Event {
-  readonly platforms: ReadonlyArray<string>;
+  readonly platforms: string[];
   readonly userChoice: Promise<{
     outcome: "accepted" | "dismissed";
     platform: string;
@@ -23,186 +13,129 @@ interface BeforeInstallPromptEvent extends Event {
 }
 
 export function PWAInstallPrompt() {
-  const [installPrompt, setInstallPrompt] =
+  const [deferredPrompt, setDeferredPrompt] =
     useState<BeforeInstallPromptEvent | null>(null);
-  const [isVisible, setIsVisible] = useState(false);
-  const [isInstalled, setIsInstalled] = useState(false);
+  const [showInstallPrompt, setShowInstallPrompt] = useState(false);
+  const [isIOS, setIsIOS] = useState(false);
+  const [isStandalone, setIsStandalone] = useState(false);
 
   useEffect(() => {
-    // Check if already installed
-    if (typeof window !== "undefined") {
-      const isStandalone = window.matchMedia(
-        "(display-mode: standalone)"
-      ).matches;
-      const isInAppBrowser = window.navigator.standalone === true;
+    // Check if device is iOS
+    const iOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    setIsIOS(iOS);
 
-      if (isStandalone || isInAppBrowser) {
-        setIsInstalled(true);
-        return;
-      }
-    }
+    // Check if app is already installed (running in standalone mode)
+    const standalone =
+      window.matchMedia("(display-mode: standalone)").matches ||
+      (window.navigator as any).standalone === true;
+    setIsStandalone(standalone);
 
-    // Listen for the install prompt
     const handleBeforeInstallPrompt = (e: Event) => {
       e.preventDefault();
-      setInstallPrompt(e as BeforeInstallPromptEvent);
+      setDeferredPrompt(e as BeforeInstallPromptEvent);
 
-      // Show the prompt after a delay (don't be too aggressive)
+      // Don't show prompt immediately, wait for user interaction
       setTimeout(() => {
-        setIsVisible(true);
-      }, 5000);
-    };
-
-    // Listen for successful installation
-    const handleAppInstalled = () => {
-      setIsInstalled(true);
-      setIsVisible(false);
-      toast.success("WAIS has been installed successfully!");
+        if (!standalone) {
+          setShowInstallPrompt(true);
+        }
+      }, 3000); // Show after 3 seconds
     };
 
     window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
-    window.addEventListener("appinstalled", handleAppInstalled);
 
     return () => {
       window.removeEventListener(
         "beforeinstallprompt",
         handleBeforeInstallPrompt
       );
-      window.removeEventListener("appinstalled", handleAppInstalled);
     };
   }, []);
 
-  const handleInstall = async () => {
-    if (!installPrompt) return;
+  const handleInstallClick = async () => {
+    if (!deferredPrompt) return;
 
-    try {
-      await installPrompt.prompt();
-      const choice = await installPrompt.userChoice;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
 
-      if (choice.outcome === "accepted") {
-        setIsVisible(false);
-        toast.success("Installing WAIS...");
-      } else {
-        toast.info("Installation cancelled");
-      }
-    } catch (error) {
-      console.error("Installation error:", error);
-      toast.error("Installation failed");
-    } finally {
-      setInstallPrompt(null);
+    if (outcome === "accepted") {
+      console.log("User accepted the install prompt");
+    } else {
+      console.log("User dismissed the install prompt");
     }
+
+    setDeferredPrompt(null);
+    setShowInstallPrompt(false);
   };
 
   const handleDismiss = () => {
-    setIsVisible(false);
-    // Don't show again for this session
-    sessionStorage.setItem("pwa-prompt-dismissed", "true");
+    setShowInstallPrompt(false);
+    // Don't show again for 24 hours
+    localStorage.setItem("pwa-install-dismissed", Date.now().toString());
   };
 
-  // Don't show if already installed, not available, or dismissed
-  if (isInstalled || !installPrompt || !isVisible) {
-    return null;
-  }
-
-  return (
-    <div className="fixed bottom-4 right-4 z-50 max-w-sm">
-      <Card className="bg-gradient-to-r from-blue-600 to-purple-600 text-white border-none shadow-lg">
-        <CardHeader className="pb-3">
-          <div className="flex items-start justify-between">
-            <div>
-              <CardTitle className="text-lg flex items-center gap-2">
-                <Smartphone className="h-5 w-5" />
-                Install WAIS
-                <Badge
-                  variant="secondary"
-                  className="bg-white/20 text-white border-none"
-                >
-                  <Zap className="h-3 w-3 mr-1" />
-                  PWA
-                </Badge>
-              </CardTitle>
-            </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleDismiss}
-              className="text-white hover:bg-white/20 h-6 w-6 p-0"
-            >
-              <X className="h-4 w-4" />
-            </Button>
-          </div>
-        </CardHeader>
-        <CardContent className="pt-0">
-          <CardDescription className="text-blue-100 mb-4">
-            Get the full app experience with offline access, push notifications,
-            and faster loading.
-          </CardDescription>
-
-          <div className="flex gap-2">
-            <Button
-              onClick={handleInstall}
-              className="bg-white text-blue-600 hover:bg-gray-100 flex-1"
-            >
-              <Download className="h-4 w-4 mr-2" />
-              Install App
-            </Button>
-            <Button
-              variant="ghost"
-              onClick={handleDismiss}
-              className="text-white hover:bg-white/20"
-            >
-              Later
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
-  );
-}
-
-// PWA status indicator for development
-export function PWAStatus() {
-  const [isInstalled, setIsInstalled] = useState(false);
-  const [isOnline, setIsOnline] = useState(true);
-
+  // Check if user has dismissed the prompt recently
   useEffect(() => {
-    // Check installation status
-    if (typeof window !== "undefined") {
-      const isStandalone = window.matchMedia(
-        "(display-mode: standalone)"
-      ).matches;
-      const isInAppBrowser = window.navigator.standalone === true;
-      setIsInstalled(isStandalone || isInAppBrowser);
-      setIsOnline(navigator.onLine);
+    const dismissed = localStorage.getItem("pwa-install-dismissed");
+    if (dismissed) {
+      const dismissedTime = parseInt(dismissed);
+      const dayInMs = 24 * 60 * 60 * 1000; // 24 hours
+      if (Date.now() - dismissedTime < dayInMs) {
+        setShowInstallPrompt(false);
+      }
     }
-
-    // Listen for online/offline changes
-    const handleOnline = () => setIsOnline(true);
-    const handleOffline = () => setIsOnline(false);
-
-    window.addEventListener("online", handleOnline);
-    window.addEventListener("offline", handleOffline);
-
-    return () => {
-      window.removeEventListener("online", handleOnline);
-      window.removeEventListener("offline", handleOffline);
-    };
   }, []);
 
-  // Only show in development
-  if (process.env.NODE_ENV !== "development") {
+  // Don't show if already installed or on unsupported platforms
+  if (isStandalone || (!deferredPrompt && !isIOS) || !showInstallPrompt) {
     return null;
   }
 
   return (
-    <div className="fixed top-4 right-4 z-50 flex gap-2">
-      <Badge variant={isInstalled ? "default" : "secondary"}>
-        <Smartphone className="h-3 w-3 mr-1" />
-        {isInstalled ? "PWA Installed" : "PWA Available"}
-      </Badge>
-      <Badge variant={isOnline ? "default" : "destructive"}>
-        {isOnline ? "Online" : "Offline"}
-      </Badge>
+    <div className="fixed bottom-4 left-4 right-4 md:left-auto md:right-4 md:w-80 z-50">
+      <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-4">
+        <div className="flex items-start justify-between">
+          <div className="flex items-start gap-3">
+            <div className="p-2 bg-blue-50 rounded-lg flex-shrink-0">
+              <Download className="w-5 h-5 text-blue-600" />
+            </div>
+            <div className="flex-1">
+              <h3 className="font-semibold text-gray-900 text-sm">
+                Install Walz App
+              </h3>
+              <p className="text-xs text-gray-600 mt-1">
+                {isIOS
+                  ? "Tap the share button and select 'Add to Home Screen'"
+                  : "Add Walz to your home screen for quick access"}
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={handleDismiss}
+            className="text-gray-400 hover:text-gray-600 p-1"
+            aria-label="Dismiss install prompt"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+
+        {!isIOS && (
+          <div className="mt-3 flex gap-2">
+            <button
+              onClick={handleInstallClick}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg text-sm font-medium transition-colors flex-1"
+            >
+              Install App
+            </button>
+            <button
+              onClick={handleDismiss}
+              className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors"
+            >
+              Not Now
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

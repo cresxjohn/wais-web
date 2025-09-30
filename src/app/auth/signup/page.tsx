@@ -2,284 +2,321 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { Icons } from "@/components/ui/icons";
 import { useAuth } from "@/hooks";
-import { signUpSchema } from "@/lib/validations/auth";
-import { Eye, EyeOff } from "lucide-react";
-import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Eye, EyeOff, Mail, Lock, User, ArrowRight } from "lucide-react";
+import { FcGoogle } from "react-icons/fc";
+import Link from "next/link";
 
-type SignUpFormData = {
+interface SignupForm {
   name: string;
   email: string;
   password: string;
   confirmPassword: string;
-};
+}
 
-export default function SignUpPage() {
+export default function SignupPage() {
+  const [formData, setFormData] = useState<SignupForm>({
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const [error, setError] = useState("");
+
   const { signUp, signInWithGoogle } = useAuth();
   const router = useRouter();
 
-  const form = useForm<SignUpFormData>({
-    resolver: zodResolver(signUpSchema),
-    defaultValues: {
-      name: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
-    },
-  });
-
-  const onSubmit = async (data: SignUpFormData) => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     setIsLoading(true);
+    setError("");
+
+    // Validate password match
+    if (formData.password !== formData.confirmPassword) {
+      setError("Passwords do not match");
+      setIsLoading(false);
+      return;
+    }
+
+    // Validate password strength
+    if (formData.password.length < 6) {
+      setError("Password must be at least 6 characters long");
+      setIsLoading(false);
+      return;
+    }
+
     try {
       const result = await signUp({
-        name: data.name,
-        email: data.email,
-        password: data.password,
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
       });
-      if (result.success) {
-        toast.success("Account created!", {
-          description:
-            "Welcome to WAIS! Your account has been created successfully.",
-        });
 
-        // Use window.location.href to trigger middleware check
-        setTimeout(() => {
-          window.location.href = "/dashboard";
-        }, 100);
+      if (result.success) {
+        router.push("/dashboard");
       } else {
-        toast.error("Sign up failed", {
-          description: result.error || "Please check your information.",
-        });
+        setError(result.error || "Failed to create account");
       }
-    } catch (error) {
-      toast.error("Sign up failed", {
-        description: "An unexpected error occurred.",
-      });
+    } catch (err) {
+      setError("An unexpected error occurred");
     } finally {
       setIsLoading(false);
     }
   };
 
+  const handleInputChange = (field: keyof SignupForm, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
   const handleGoogleSignIn = async () => {
-    setIsGoogleLoading(true);
+    setIsLoading(true);
+    setError("");
+
     try {
       const result = await signInWithGoogle();
       if (result.success) {
-        toast.success("Welcome!", {
-          description: "You have successfully signed in with Google.",
-        });
-
-        // Use window.location.href to trigger middleware check
-        setTimeout(() => {
-          window.location.href = "/dashboard";
-        }, 100);
+        router.push("/dashboard");
       } else {
-        toast.error("Google sign in failed", {
-          description: result.error || "Please try again.",
-        });
+        setError(result.error || "Failed to sign in with Google");
       }
-    } catch (error) {
-      toast.error("Google sign in failed", {
-        description: "An unexpected error occurred.",
-      });
+    } catch (err) {
+      setError("An unexpected error occurred with Google sign-in");
     } finally {
-      setIsGoogleLoading(false);
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-emerald-100 dark:from-gray-900 dark:to-gray-800 px-4 py-12">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl mb-4">
-            <span className="text-white font-bold text-2xl">W</span>
+    <div className="min-h-screen bg-white flex items-center justify-center p-4">
+      <div className="w-full max-w-md space-y-8">
+        {/* Logo */}
+        <div className="text-center">
+          <div className="flex items-center justify-center mb-6">
+            <img
+              src="/walz-logo.png"
+              alt="walz logo"
+              className="h-12 rounded-lg"
+            />
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-            Create Account
+          <h1 className="text-2xl font-bold text-gray-900">
+            Create your account
           </h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-2">
-            Start your financial journey with WAIS
+          <p className="text-gray-600 mt-2">
+            Join thousands using Walz for smart financial management
           </p>
         </div>
 
+        {/* Signup Form */}
         <Card className="shadow-lg">
-          <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl text-center">Sign Up</CardTitle>
+          <CardHeader className="space-y-1 pb-4">
+            <CardTitle className="text-center">Sign Up</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
-            {/* Google Sign In */}
-            <Button
-              variant="outline"
-              onClick={handleGoogleSignIn}
-              disabled={isGoogleLoading || isLoading}
-              className="w-full"
-            >
-              {isGoogleLoading ? (
-                <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-              ) : (
-                <Icons.google className="mr-2 h-4 w-4" />
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {error && (
+                <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+                  <p className="text-sm text-red-600">{error}</p>
+                </div>
               )}
-              Continue with Google
-            </Button>
 
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <Separator className="w-full" />
-              </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-background px-2 text-muted-foreground">
-                  Or continue with email
-                </span>
-              </div>
-            </div>
-
-            {/* Email/Password Form */}
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              {/* Name Field */}
               <div className="space-y-2">
-                <Label htmlFor="name">Full Name</Label>
-                <Input
-                  id="name"
-                  type="text"
-                  placeholder="Enter your full name"
-                  {...form.register("name")}
-                  disabled={isLoading}
-                />
-                {form.formState.errors.name && (
-                  <p className="text-sm text-red-600 dark:text-red-400">
-                    {form.formState.errors.name.message}
-                  </p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="Enter your email"
-                  {...form.register("email")}
-                  disabled={isLoading}
-                />
-                {form.formState.errors.email && (
-                  <p className="text-sm text-red-600 dark:text-red-400">
-                    {form.formState.errors.email.message}
-                  </p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
+                <label className="text-sm font-medium text-gray-700">
+                  Full Name
+                </label>
                 <div className="relative">
-                  <Input
-                    id="password"
-                    type={showPassword ? "text" : "password"}
-                    placeholder="Create a password"
-                    {...form.register("password")}
-                    disabled={isLoading}
-                    className="pr-10"
+                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                  <input
+                    type="text"
+                    value={formData.name}
+                    onChange={(e) => handleInputChange("name", e.target.value)}
+                    placeholder="Enter your full name"
+                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    required
                   />
-                  <Button
+                </div>
+              </div>
+
+              {/* Email Field */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700">
+                  Email
+                </label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                  <input
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => handleInputChange("email", e.target.value)}
+                    placeholder="Enter your email"
+                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    required
+                  />
+                </div>
+              </div>
+
+              {/* Password Field */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700">
+                  Password
+                </label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    value={formData.password}
+                    onChange={(e) =>
+                      handleInputChange("password", e.target.value)
+                    }
+                    placeholder="Create a password"
+                    className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    required
+                  />
+                  <button
                     type="button"
-                    variant="ghost"
-                    size="sm"
-                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
                     onClick={() => setShowPassword(!showPassword)}
-                    disabled={isLoading}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
                   >
                     {showPassword ? (
-                      <EyeOff className="h-4 w-4" />
+                      <EyeOff className="w-4 h-4" />
                     ) : (
-                      <Eye className="h-4 w-4" />
+                      <Eye className="w-4 h-4" />
                     )}
-                  </Button>
+                  </button>
                 </div>
-                {form.formState.errors.password && (
-                  <p className="text-sm text-red-600 dark:text-red-400">
-                    {form.formState.errors.password.message}
-                  </p>
-                )}
               </div>
 
+              {/* Confirm Password Field */}
               <div className="space-y-2">
-                <Label htmlFor="confirmPassword">Confirm Password</Label>
+                <label className="text-sm font-medium text-gray-700">
+                  Confirm Password
+                </label>
                 <div className="relative">
-                  <Input
-                    id="confirmPassword"
+                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                  <input
                     type={showConfirmPassword ? "text" : "password"}
+                    value={formData.confirmPassword}
+                    onChange={(e) =>
+                      handleInputChange("confirmPassword", e.target.value)
+                    }
                     placeholder="Confirm your password"
-                    {...form.register("confirmPassword")}
-                    disabled={isLoading}
-                    className="pr-10"
+                    className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    required
                   />
-                  <Button
+                  <button
                     type="button"
-                    variant="ghost"
-                    size="sm"
-                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    disabled={isLoading}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
                   >
                     {showConfirmPassword ? (
-                      <EyeOff className="h-4 w-4" />
+                      <EyeOff className="w-4 h-4" />
                     ) : (
-                      <Eye className="h-4 w-4" />
+                      <Eye className="w-4 h-4" />
                     )}
-                  </Button>
+                  </button>
                 </div>
-                {form.formState.errors.confirmPassword && (
-                  <p className="text-sm text-red-600 dark:text-red-400">
-                    {form.formState.errors.confirmPassword.message}
-                  </p>
-                )}
               </div>
 
-              <Button
+              {/* Password Strength Indicator */}
+              {formData.password && (
+                <div className="space-y-1">
+                  <div className="text-xs text-gray-500">
+                    Password strength:
+                  </div>
+                  <div className="flex gap-1">
+                    <div
+                      className={`h-1 flex-1 rounded ${
+                        formData.password.length >= 6
+                          ? "bg-green-500"
+                          : "bg-gray-200"
+                      }`}
+                    ></div>
+                    <div
+                      className={`h-1 flex-1 rounded ${
+                        formData.password.length >= 8
+                          ? "bg-green-500"
+                          : "bg-gray-200"
+                      }`}
+                    ></div>
+                    <div
+                      className={`h-1 flex-1 rounded ${
+                        formData.password.length >= 10 &&
+                        /[A-Z]/.test(formData.password)
+                          ? "bg-green-500"
+                          : "bg-gray-200"
+                      }`}
+                    ></div>
+                  </div>
+                </div>
+              )}
+
+              {/* Submit Button */}
+              <button
                 type="submit"
-                className="w-full"
-                disabled={isLoading || isGoogleLoading}
+                disabled={isLoading}
+                className="w-full walz-button-primary font-medium rounded-full transition-colors flex items-center justify-center gap-2 px-6 py-3 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isLoading ? (
-                  <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-                ) : null}
-                Create Account
-              </Button>
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    Creating account...
+                  </>
+                ) : (
+                  <>
+                    Create Account
+                    <ArrowRight className="w-4 h-4" />
+                  </>
+                )}
+              </button>
             </form>
 
-            <div className="text-center text-sm">
-              <span className="text-gray-600 dark:text-gray-400">
+            {/* Divider */}
+            <div className="flex items-center my-6">
+              <div className="flex-1 border-t border-gray-200"></div>
+              <span className="px-4 text-sm text-gray-500">Or continue with</span>
+              <div className="flex-1 border-t border-gray-200"></div>
+            </div>
+
+            {/* Google Sign-in Button */}
+            <button
+              type="button"
+              onClick={handleGoogleSignIn}
+              disabled={isLoading}
+              className="w-full flex items-center justify-center gap-3 px-6 py-3 border border-gray-300 rounded-full font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed mb-6"
+            >
+              <FcGoogle className="w-5 h-5" />
+              Continue with Google
+            </button>
+
+            {/* Sign In Link */}
+            <div className="text-center">
+              <p className="text-sm text-gray-600">
                 Already have an account?{" "}
-              </span>
-              <Link
-                href="/auth/login"
-                className="text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300 font-medium"
-              >
-                Sign in
-              </Link>
+                <Link
+                  href="/auth/login"
+                  className="text-blue-600 hover:text-blue-700 font-medium"
+                >
+                  Sign in
+                </Link>
+              </p>
             </div>
           </CardContent>
         </Card>
 
-        <div className="text-center text-xs text-gray-500 dark:text-gray-400 mt-8">
-          <p>
+        {/* Footer */}
+        <div className="text-center">
+          <p className="text-xs text-gray-500">
             By creating an account, you agree to our{" "}
-            <Link href="/terms" className="hover:underline">
+            <Link href="/terms" className="text-blue-600 hover:text-blue-700">
               Terms of Service
             </Link>{" "}
             and{" "}
-            <Link href="/privacy" className="hover:underline">
+            <Link href="/privacy" className="text-blue-600 hover:text-blue-700">
               Privacy Policy
             </Link>
           </p>

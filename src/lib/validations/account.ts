@@ -18,7 +18,7 @@ export const baseAccountSchema = z.object({
     .min(1, "Account name is required")
     .min(2, "Account name must be at least 2 characters"),
   type: z.enum(accountTypes, {
-    required_error: "Account type is required",
+    message: "Account type is required",
   }),
   balance: z
     .string()

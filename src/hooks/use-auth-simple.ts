@@ -1,10 +1,10 @@
 "use client";
 
-import React from "react";
+import { useToastActions } from "@/components/ui/toast";
+import { config } from "@/lib/config";
 import { useAuthStore } from "@/stores/auth-store";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
-import { config } from "@/lib/config";
+import React from "react";
 
 export interface AuthResult {
   success: boolean;
@@ -105,6 +105,7 @@ async function graphqlRequest(
 
 export function useAuth() {
   const router = useRouter();
+  const toast = useToastActions();
   const {
     user,
     accessToken,
@@ -277,9 +278,10 @@ export function useAuth() {
     try {
       // In a real implementation, you would use Google Sign-In SDK
       // For now, return a mock success to maintain the interface
-      toast.info("Google Sign-In", {
-        description: "Google authentication will be implemented soon.",
-      });
+      toast.info(
+        "Google Sign-In",
+        "Google authentication will be implemented soon."
+      );
 
       return { success: false, error: "Google Sign-In not yet implemented" };
     } catch (error: any) {

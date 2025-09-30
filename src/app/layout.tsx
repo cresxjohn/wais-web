@@ -3,11 +3,9 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { ReactQueryProvider } from "@/lib/react-query-provider";
 // import { ApolloGraphQLProvider } from "@/lib/apollo-provider"; // Temporarily disabled
-import { Toaster } from "@/components/ui/sonner";
 import { ServiceWorkerProvider } from "@/components/pwa/service-worker";
 import { PWAInstallPrompt } from "@/components/pwa/install-prompt";
-import { NotificationActions } from "@/components/notifications/notification-center";
-import { AppInitializer } from "@/components/app-initializer";
+import { ToastProvider } from "@/components/ui/toast";
 import { config } from "@/lib/config";
 
 const inter = Inter({
@@ -78,14 +76,11 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} font-sans antialiased`}>
         <ReactQueryProvider>
-          {/* <ApolloGraphQLProvider> */}
-          <AppInitializer />
-          <ServiceWorkerProvider />
-          {children}
-          <PWAInstallPrompt />
-          <NotificationActions />
-          <Toaster richColors position="top-right" />
-          {/* </ApolloGraphQLProvider> */}
+          <ToastProvider>
+            <ServiceWorkerProvider />
+            {children}
+            <PWAInstallPrompt />
+          </ToastProvider>
         </ReactQueryProvider>
       </body>
     </html>

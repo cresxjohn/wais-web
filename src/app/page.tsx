@@ -4,13 +4,6 @@ import { useAuth } from "@/hooks";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { ArrowRight, TrendingUp, Shield, Smartphone, Zap } from "lucide-react";
 import Link from "next/link";
 
@@ -37,120 +30,177 @@ export default function HomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
-      {/* Hero Section */}
-      <div className="container mx-auto px-4 py-16">
-        <div className="text-center mb-16">
-          <div className="flex items-center justify-center mb-8">
-            <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center">
-              <span className="text-white font-bold text-2xl">W</span>
+    <div className="min-h-screen bg-white">
+      {/* Navigation */}
+      <nav className="bg-white border-b border-gray-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center gap-3">
+              <img
+                src="/walz-logo.png"
+                alt="walz logo"
+                className="h-8 rounded-lg"
+              />
+            </div>
+            <div className="flex items-center gap-4">
+              <Link
+                href="/auth/login"
+                className="text-gray-600 hover:text-gray-900 font-medium"
+              >
+                Sign In
+              </Link>
+              <Button size="sm">
+                <Link href="/auth/signup">Get Started</Link>
+              </Button>
             </div>
           </div>
+        </div>
+      </nav>
 
-          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white mb-6">
+      {/* Hero Section */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <div className="text-center mb-20">
+          <h1 className="text-5xl md:text-7xl font-bold text-gray-900 mb-6 leading-tight">
             Your AI-powered partner for{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
-              wais
+            <span className="walz-gradient-primary bg-clip-text text-transparent">
+              walz
             </span>{" "}
             financial moves
           </h1>
 
-          <p className="text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-2xl mx-auto">
+          <p className="text-xl text-gray-600 mb-10 max-w-3xl mx-auto leading-relaxed">
             Take control of your finances with intelligent tracking, AI-driven
             insights, and seamless integration with Philippine banks and
             e-wallets.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button asChild size="lg" className="text-lg px-8 py-6">
-              <Link href="/auth/signup">
+            <Button size="lg" className="text-lg px-8 py-4">
+              <Link href="/auth/signup" className="flex items-center gap-2">
                 Get Started Free
-                <ArrowRight className="ml-2 h-5 w-5" />
+                <ArrowRight className="w-5 h-5" />
               </Link>
             </Button>
-            <Button
-              asChild
-              variant="outline"
-              size="lg"
-              className="text-lg px-8 py-6"
-            >
+            <Button variant="secondary" size="lg" className="text-lg px-8 py-4">
               <Link href="/auth/login">Sign In</Link>
             </Button>
           </div>
         </div>
 
         {/* Features Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
-          <Card className="text-center">
-            <CardHeader>
-              <TrendingUp className="h-12 w-12 text-blue-600 mx-auto mb-4" />
-              <CardTitle>AI-Powered Insights</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <CardDescription>
-                Get personalized financial advice and spending insights powered
-                by advanced AI
-              </CardDescription>
-            </CardContent>
-          </Card>
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-20">
+          <div className="walz-card p-8 text-center hover:shadow-lg transition-all">
+            <div className="w-16 h-16 walz-gradient-primary rounded-2xl flex items-center justify-center mx-auto mb-6">
+              <TrendingUp className="h-8 w-8 text-white" />
+            </div>
+            <h3 className="text-xl font-semibold text-gray-900 mb-4">
+              AI-Powered Insights
+            </h3>
+            <p className="text-gray-600">
+              Get personalized financial advice and spending insights powered by
+              advanced AI
+            </p>
+          </div>
 
-          <Card className="text-center">
-            <CardHeader>
-              <Shield className="h-12 w-12 text-green-600 mx-auto mb-4" />
-              <CardTitle>Bank-Level Security</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <CardDescription>
-                Your financial data is protected with enterprise-grade
-                encryption and security
-              </CardDescription>
-            </CardContent>
-          </Card>
+          <div className="walz-card p-8 text-center hover:shadow-lg transition-all">
+            <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
+              <Shield className="h-8 w-8 text-white" />
+            </div>
+            <h3 className="text-xl font-semibold text-gray-900 mb-4">
+              Bank-Level Security
+            </h3>
+            <p className="text-gray-600">
+              Your financial data is protected with enterprise-grade encryption
+              and security
+            </p>
+          </div>
 
-          <Card className="text-center">
-            <CardHeader>
-              <Smartphone className="h-12 w-12 text-purple-600 mx-auto mb-4" />
-              <CardTitle>Philippines-First</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <CardDescription>
-                Seamlessly integrate with local banks and e-wallets like BPI,
-                UnionBank, GCash
-              </CardDescription>
-            </CardContent>
-          </Card>
+          <div className="walz-card p-8 text-center hover:shadow-lg transition-all">
+            <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
+              <Smartphone className="h-8 w-8 text-white" />
+            </div>
+            <h3 className="text-xl font-semibold text-gray-900 mb-4">
+              Philippines-First
+            </h3>
+            <p className="text-gray-600">
+              Seamlessly integrate with local banks and e-wallets like BPI,
+              UnionBank, GCash
+            </p>
+          </div>
 
-          <Card className="text-center">
-            <CardHeader>
-              <Zap className="h-12 w-12 text-orange-600 mx-auto mb-4" />
-              <CardTitle>Real-Time Tracking</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <CardDescription>
-                Track expenses, manage budgets, and monitor your financial
-                health in real-time
-              </CardDescription>
-            </CardContent>
-          </Card>
+          <div className="walz-card p-8 text-center hover:shadow-lg transition-all">
+            <div className="w-16 h-16 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
+              <Zap className="h-8 w-8 text-white" />
+            </div>
+            <h3 className="text-xl font-semibold text-gray-900 mb-4">
+              Real-Time Tracking
+            </h3>
+            <p className="text-gray-600">
+              Track expenses, manage budgets, and monitor your financial health
+              in real-time
+            </p>
+          </div>
         </div>
 
         {/* CTA Section */}
-        <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 md:p-12 text-center shadow-xl">
-          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
-            Ready to take control of your finances?
-          </h2>
-          <p className="text-lg text-gray-600 dark:text-gray-300 mb-8">
-            Join thousands of Filipinos already using WAIS to build better
-            financial habits
-          </p>
-          <Button asChild size="lg" className="text-lg px-8 py-6">
-            <Link href="/auth/signup">
-              Start Your Financial Journey
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Link>
-          </Button>
+        <div className="walz-gradient-insights rounded-3xl p-12 text-center text-white relative overflow-hidden">
+          <div className="relative z-10">
+            <h2 className="text-4xl font-bold mb-6">
+              Ready to take control of your finances?
+            </h2>
+            <p className="text-xl text-blue-100 mb-10 max-w-2xl mx-auto">
+              Join thousands of Filipinos already using Walz to build better
+              financial habits
+            </p>
+            <Button
+              size="lg"
+              className="text-lg px-8 py-4 bg-white hover:bg-gray-100 text-blue-600"
+            >
+              <Link href="/auth/signup" className="flex items-center gap-2">
+                Start Your Financial Journey
+                <ArrowRight className="w-5 h-5" />
+              </Link>
+            </Button>
+          </div>
+          <div className="absolute -right-20 -bottom-20 opacity-10">
+            <TrendingUp className="w-80 h-80" />
+          </div>
         </div>
       </div>
+
+      {/* Footer */}
+      <footer className="bg-gray-50 border-t border-gray-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="text-center">
+            <div className="flex items-center justify-center mb-6">
+              <img
+                src="/walz-logo.png"
+                alt="walz logo"
+                className="h-8 rounded-lg"
+              />
+            </div>
+            <p className="text-gray-600 mb-6">
+              Your AI-powered partner for wise financial moves
+            </p>
+            <div className="flex justify-center gap-8 text-sm text-gray-500">
+              <Link href="/privacy" className="hover:text-gray-900">
+                Privacy Policy
+              </Link>
+              <Link href="/terms" className="hover:text-gray-900">
+                Terms of Service
+              </Link>
+              <Link href="/support" className="hover:text-gray-900">
+                Support
+              </Link>
+            </div>
+            <div className="mt-8 pt-8 border-t border-gray-200">
+              <p className="text-sm text-gray-500">
+                © 2025 Walz. All rights reserved. Built with ❤️ for Filipinos.
+              </p>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
