@@ -3,10 +3,22 @@
 import { MainLayout } from "@/components/layout/main-layout";
 import { Button } from "@/components/ui/button";
 import { useToastActions } from "@/components/ui/toast";
-import { CheckCircle, XCircle, AlertTriangle, Info } from "lucide-react";
+import {
+  CheckCircle,
+  XCircle,
+  AlertTriangle,
+  Info,
+  User,
+  Lock,
+} from "lucide-react";
+import { useMe } from "@/hooks/use-dashboard-data";
+import { decodeJWT, isTokenExpired } from "@/lib/graphql-client";
+import { useState } from "react";
 
 export default function TestToastPage() {
   const toast = useToastActions();
+  const [testToken, setTestToken] = useState("");
+  const { data: user, isLoading: userLoading, error: userError } = useMe();
 
   return (
     <MainLayout>
@@ -138,6 +150,135 @@ export default function TestToastPage() {
             >
               Show Multiple Toasts
             </Button>
+          </div>
+
+          {/* Authentication Testing Section */}
+          <div className="mt-8 pt-8 border-t border-gray-200">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+              <Lock className="w-5 h-5" />
+              Authentication Testing
+            </h3>
+
+            <div className="space-y-4">
+              {/* Current Auth Status */}
+              <div className="walz-card p-4">
+                <h4 className="font-medium text-gray-900 mb-2 flex items-center gap-2">
+                  <User className="w-4 h-4" />
+                  Current Auth Status
+                </h4>
+
+                {userLoading && (
+                  <p className="text-blue-600">Loading user data...</p>
+                )}
+                {userError && (
+                  <p className="text-red-600">Error: {userError.message}</p>
+                )}
+                {user && (
+                  <div className="text-sm text-gray-600">
+                    <p>
+                      <strong>User ID:</strong> {user.id}
+                    </p>
+                    <p>
+                      <strong>Name:</strong> {user.name || "N/A"}
+                    </p>
+                    <p>
+                      <strong>Email:</strong> {user.email || "N/A"}
+                    </p>
+                  </div>
+                )}
+
+                {/* JWT Token Info */}
+                {typeof window !== "undefined" &&
+                  (() => {
+                    const token = localStorage.getItem("wais_access_token");
+                    if (token) {
+                      const decoded = decodeJWT(token);
+                      const expired = isTokenExpired(token);
+                      return (
+                        <div className="mt-3 text-sm">
+                          <p
+                            className={`font-medium ${
+                              expired ? "text-red-600" : "text-green-600"
+                            }`}
+                          >
+                            JWT Token: {expired ? "EXPIRED" : "VALID"}
+                          </p>
+                          {decoded && (
+                            <div className="text-gray-600 mt-1">
+                              <p>
+                                Expires:{" "}
+                                {new Date(decoded.exp * 1000).toLocaleString()}
+                              </p>
+                              <p>Issuer: {decoded.iss}</p>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    }
+                    return (
+                      <p className="text-gray-500 mt-3">No JWT token found</p>
+                    );
+                  })()}
+              </div>
+
+              {/* Manual Token Testing */}
+              <div className="walz-card p-4">
+                <h4 className="font-medium text-gray-900 mb-2">
+                  Set Test JWT Token
+                </h4>
+                <div className="space-y-2">
+                  <textarea
+                    value={testToken}
+                    onChange={(e) => setTestToken(e.target.value)}
+                    placeholder="Paste JWT token here for testing..."
+                    className="w-full p-2 border border-gray-300 rounded text-sm"
+                    rows={3}
+                  />
+                  <div className="flex gap-2">
+                    <Button
+                      variant="primary"
+                      onClick={() => {
+                        if (testToken.trim()) {
+                          localStorage.setItem(
+                            "wais_access_token",
+                            testToken.trim()
+                          );
+                          toast.success(
+                            "Token Set",
+                            "JWT token saved to localStorage"
+                          );
+                        }
+                      }}
+                    >
+                      Set Token
+                    </Button>
+                    <Button
+                      variant="secondary"
+                      onClick={() => {
+                        const validToken =
+                          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJiZTdjNGZkMi0zYWRkLTRjMzctYjEwYy1hNGRkYjJiMGQxMGIiLCJpYXQiOjE3NTkyMDk0NDksImV4cCI6MTc1OTIxMDM0OSwiaXNzIjoid2Fpcy1hdXRoIn0.TKo4M-rIjciPJxzzIGa_PRZhLt56yjoK9nkuaPkIM94";
+                        setTestToken(validToken);
+                      }}
+                    >
+                      Use Valid Test Token
+                    </Button>
+                    <Button
+                      variant="secondary"
+                      onClick={() => {
+                        localStorage.removeItem("wais_access_token");
+                        localStorage.removeItem("wais_refresh_token");
+                        toast.info(
+                          "Tokens Cleared",
+                          "All JWT tokens removed from localStorage"
+                        );
+                      }}
+                    >
+                      Clear Tokens
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

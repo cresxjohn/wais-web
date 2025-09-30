@@ -2,7 +2,6 @@ import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ReactQueryProvider } from "@/lib/react-query-provider";
-// import { ApolloGraphQLProvider } from "@/lib/apollo-provider"; // Temporarily disabled
 import { ServiceWorkerProvider } from "@/components/pwa/service-worker";
 import { PWAInstallPrompt } from "@/components/pwa/install-prompt";
 import { ToastProvider } from "@/components/ui/toast";

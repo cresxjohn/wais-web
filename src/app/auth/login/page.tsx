@@ -168,7 +168,9 @@ export default function LoginPage() {
             {/* Divider */}
             <div className="flex items-center my-6">
               <div className="flex-1 border-t border-gray-200"></div>
-              <span className="px-4 text-sm text-gray-500">Or continue with</span>
+              <span className="px-4 text-sm text-gray-500">
+                Or continue with
+              </span>
               <div className="flex-1 border-t border-gray-200"></div>
             </div>
 

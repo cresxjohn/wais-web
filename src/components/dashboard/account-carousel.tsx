@@ -3,9 +3,44 @@
 import { useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { AccountCard, AddAccountCard } from "./account-card";
-import { Building2, CreditCard, Wallet } from "lucide-react";
+import {
+  Building2,
+  CreditCard,
+  Wallet,
+  PiggyBank,
+  DollarSign,
+  Car,
+} from "lucide-react";
+import { formatAccountBalance } from "@/hooks/use-dashboard-data";
+import type { Account } from "@/lib/graphql-client";
 
-export function AccountCarousel() {
+interface AccountCarouselProps {
+  accounts?: Account[];
+}
+
+// Map account types to icons
+const getAccountIcon = (type: string) => {
+  const accountType = type.toLowerCase();
+  switch (accountType) {
+    case "cash":
+      return <Wallet className="w-5 h-5 text-blue-600" />;
+    case "savings":
+      return <PiggyBank className="w-5 h-5 text-green-600" />;
+    case "checking":
+      return <Building2 className="w-5 h-5 text-orange-600" />;
+    case "credit_card":
+    case "line_of_credit":
+      return <CreditCard className="w-5 h-5 text-purple-600" />;
+    case "loan":
+      return <Car className="w-5 h-5 text-red-600" />;
+    case "insurance":
+      return <DollarSign className="w-5 h-5 text-indigo-600" />;
+    default:
+      return <Wallet className="w-5 h-5 text-gray-600" />;
+  }
+};
+
+export function AccountCarousel({ accounts = [] }: AccountCarouselProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [showLeftButton, setShowLeftButton] = useState(false);
   const [showRightButton, setShowRightButton] = useState(false);
@@ -91,38 +126,50 @@ export function AccountCarousel() {
         className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide"
         onScroll={checkScrollButtons}
       >
-        <AccountCard
-          icon={<Wallet className="w-5 h-5 text-blue-600" />}
-          name="Cash Account"
-          bank="BDO •••• 2847"
-          amount="₱45,230.75"
-        />
-        <AccountCard
-          icon={<Building2 className="w-5 h-5 text-green-600" />}
-          name="Savings"
-          bank="Metrobank •••• 5619"
-          amount="₱68,500.00"
-        />
-        <AccountCard
-          icon={<CreditCard className="w-5 h-5 text-purple-600" />}
-          name="Credit Card"
-          bank="BPI •••• 9123"
-          amount="₱-12,350.25"
-          negative
-        />
-        <AccountCard
-          icon={<Wallet className="w-5 h-5 text-orange-600" />}
-          name="Business Account"
-          bank="UnionBank •••• 1234"
-          amount="₱25,750.00"
-        />
-        <AccountCard
-          icon={<Building2 className="w-5 h-5 text-red-600" />}
-          name="Investment Account"
-          bank="Security Bank •••• 5678"
-          amount="₱87,650.25"
-        />
-        <AddAccountCard />
+        {accounts.length > 0 ? (
+          <>
+            {accounts
+              .filter((account) => !account.excludeFromStats) // Only show active accounts
+              .map((account) => {
+                const balanceInfo = formatAccountBalance(account);
+                return (
+                  <AccountCard
+                    key={account.id}
+                    icon={getAccountIcon(account.type)}
+                    name={account.name}
+                    bank={`${account.institution || "Bank"} ${
+                      account.accountNumberLast4
+                        ? `•••• ${account.accountNumberLast4}`
+                        : ""
+                    }`}
+                    amount={balanceInfo.formatted}
+                    negative={balanceInfo.isNegative}
+                    onClick={() => {
+                      // Handle account click - could navigate to account details
+                      console.log("Account clicked:", account.id);
+                    }}
+                  />
+                );
+              })}
+            <AddAccountCard />
+          </>
+        ) : (
+          <>
+            {/* Show placeholder when no accounts */}
+            <div className="flex-shrink-0 w-80 bg-gray-50 rounded-xl p-6 flex items-center justify-center">
+              <div className="text-center">
+                <PiggyBank className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+                <p className="text-gray-600 font-medium mb-2">
+                  No accounts yet
+                </p>
+                <p className="text-sm text-gray-500">
+                  Add your first account to get started
+                </p>
+              </div>
+            </div>
+            <AddAccountCard />
+          </>
+        )}
       </div>
     </div>
   );
