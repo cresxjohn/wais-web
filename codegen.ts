@@ -3,7 +3,7 @@ import { CodegenConfig } from "@graphql-codegen/cli";
 const config: CodegenConfig = {
   overwrite: true,
   schema: "http://localhost:3000/graphql", // WAIS backend GraphQL Federation endpoint
-  documents: ["src/graphql/**/*.graphql"],
+  documents: ["src/**/*.{ts,tsx}"],
   generates: {
     "src/gql/": {
       preset: "client",
